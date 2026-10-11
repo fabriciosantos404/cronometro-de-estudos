@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="pt-BR" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Cronômetro de plano de estudos com matérias, histórico, estatísticas e meta diária — tudo salvo no seu navegador." />
+  <title>Focus · Cronômetro de Estudos</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="bg" aria-hidden="true">
+    <span class="orb orb-1"></span>
+    <span class="orb orb-2"></span>
+    <span class="orb orb-3"></span>
+    <span class="bg-grid"></span>
+  </div>
+
+  <header class="topbar reveal" style="--delay:.02s">
+    <div class="brand">
+      <div class="brand-mark">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="13.5" r="7.5"></circle>
+          <path d="M12 9.8v3.9l2.4 1.6"></path>
+          <path d="M9.5 2.5h5"></path>
+          <path d="M19 6.5l1.4-1.4"></path>
+        </svg>
+      </div>
+      <div class="brand-text">
+        <h1>Focus</h1>
+        <p>Cronômetro do plano de estudos</p>
+      </div>
+    </div>
+
+    <div class="topbar-actions">
+      <span class="autosave"><i class="live-dot"></i> Salvo neste navegador</span>
+      <button id="themeBtn" class="icon-btn" type="button" aria-label="Alternar tema claro/escuro">
+        <svg class="i-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"></path>
+        </svg>
+        <svg class="i-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="4"></circle>
+          <path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"></path>
+        </svg>
+      </button>
+    </div>
+  </header>
+
+  <main class="container">
+    <!-- ================= ESTATÍSTICAS ================= -->
+    <section class="stats reveal" style="--delay:.08s" aria-label="Resumo de horas">
+      <article class="card stat">
+        <div class="stat-icon" style="--c:#7c5cff;--c-soft:rgba(124,92,255,.18)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="9"></circle><path d="M12 7v5l3 2"></path>
+          </svg>
+        </div>
+        <div class="stat-body">
+          <span class="stat-value" id="statTotal">0min</span>
+          <span class="stat-label">Total estudado</span>
+        </div>
+      </article>
+
+      <article class="card stat">
+        <div class="stat-icon" style="--c:#22d3ee;--c-soft:rgba(34,211,238,.16)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="4.5" width="18" height="16" rx="3"></rect><path d="M8 2.5v4M16 2.5v4M3 10h18"></path>
+          </svg>
+        </div>
+        <div class="stat-body">
+          <span class="stat-value" id="statToday">0min</span>
+          <span class="stat-label">Hoje</span>
+        </div>
+      </article>
+
+      <article class="card stat">
+        <div class="stat-icon" style="--c:#34d399;--c-soft:rgba(52,211,153,.16)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M3 17l5-5 4 3 5.5-6.5"></path><path d="M14 8.5h4.5V13"></path>
+          </svg>
+        </div>
+        <div class="stat-body">
+          <span class="stat-value" id="statWeek">0min</span>
+          <span class="stat-label">Esta semana</span>
+        </div>
+      </article>
+
+      <article class="card stat">
+        <div class="stat-icon" style="--c:#fbbf24;--c-soft:rgba(251,191,36,.16)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M8 6h13M8 12h13M8 18h13M3.5 6h.01M3.5 12h.01M3.5 18h.01"></path>
+          </svg>
+        </div>
+        <div class="stat-body">
+          <span class="stat-value" id="statSessions">0 sessões</span>
+          <span class="stat-label">Sessões registradas</span>
+        </div>
+      </article>
+    </section>
+
+    <!-- ================= CRONÔMETRO + GRÁFICO ================= -->
+    <div class="main-grid">
+      <section class="card timer-card reveal" style="--delay:.16s">
+        <div class="timer-head">
+          <span class="pill" id="timerState"><i></i> Parado</span>
+          <span class="timer-subject-label" id="timerSubjectLabel">Sem matéria</span>
+        </div>
+
+        <div class="timer-display" id="timerDisplay" role="timer" aria-live="off">00:00:00</div>
+
+        <div class="chips" id="subjectChips" aria-label="Escolher matéria do cronômetro"></div>
+
+        <div class="controls">
+          <button class="btn btn-ghost" id="resetBtn" type="button">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M3.5 12a8.5 8.5 0 1 0 2.6-6.1"></path><path d="M3 4.5v5h5"></path>
+            </svg>
+            <span>Zerar</span>
+          </button>
+
+          <button class="btn btn-play" id="playBtn" type="button" aria-label="Iniciar cronômetro">
+            <svg class="i-play" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M8 5.14v13.72a1 1 0 0 0 1.52.85l10.9-6.86a1 1 0 0 0 0-1.7L9.52 4.29A1 1 0 0 0 8 5.14z"></path>
+            </svg>
+            <svg class="i-pause" viewBox="0 0 24 24" fill="currentColor">
+              <rect x="6" y="5" width="4.2" height="14" rx="1.4"></rect>
+              <rect x="13.8" y="5" width="4.2" height="14" rx="1.4"></rect>
+            </svg>
+            <span id="playLabel">Iniciar</span>
+          </button>
+
+          <button class="btn btn-ghost" id="manualBtn" type="button">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+              <path d="M12 5.5v13M5.5 12h13"></path>
+            </svg>
+            <span>Tempo manual</span>
+          </button>
+        </div>
+
+        <div class="goal">
+          <div class="goal-row">
+            <span class="goal-title">Meta do dia</span>
+            <span class="goal-value" id="goalText">0min / 4h</span>
+          </div>
+          <div class="bar goal-bar"><span class="bar-fill" id="goalBar" style="width:0%"></span></div>
+          <label class="goal-edit">
+            Ajustar meta
+            <input id="goalInput" type="number" min="0.5" max="24" step="0.5" value="4" />
+            horas
+          </label>
+        </div>
+
+        <p class="hint">
+          O cronômetro pausa sozinho quando você fecha a página e lembra de onde parou.
+          Ao zerar, o tempo vira um registro no histórico. Atalho: barra de espaço.
+        </p>
+      </section>
+
+      <section class="card chart-card reveal" style="--delay:.24s">
+        <div class="card-head">
+          <h2>Horas por matéria</h2>
+          <div class="seg" role="tablist" aria-label="Período do gráfico">
+            <button class="seg-btn active" type="button" data-range="week">Semana</button>
+            <button class="seg-btn" type="button" data-range="total">Total</button>
+          </div>
+        </div>
+        <div class="chart" id="chart"></div>
+      </section>
+    </div>
+
+    <!-- ================= MATÉRIAS + HISTÓRICO ================= -->
+    <div class="duo">
+      <section class="card reveal" style="--delay:.32s">
+        <div class="card-head">
+          <h2>Matérias</h2>
+          <span class="card-sub" id="subjectCount">0 cadastradas</span>
+        </div>
+
+        <form class="subject-form" id="subjectForm" autocomplete="off">
+          <input id="subjectName" type="text" maxlength="40" placeholder="Nome da matéria (ex.: Matemática)" required />
+          <div class="swatches" id="swatches" role="group" aria-label="Cores disponíveis"></div>
+          <input id="subjectColor" class="color-input" type="color" value="#7c5cff" aria-label="Cor personalizada" />
+          <button class="btn btn-primary btn-sm" type="submit">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round">
+              <path d="M12 5.5v13M5.5 12h13"></path>
+            </svg>
+            <span>Adicionar</span>
+          </button>
+        </form>
+
+        <ul class="subject-list" id="subjectList"></ul>
+      </section>
+
+      <section class="card reveal" style="--delay:.4s">
+        <div class="card-head">
+          <h2>Histórico</h2>
+          <div class="head-actions">
+            <select id="historyFilter" class="select" aria-label="Filtrar por matéria"></select>
+            <button id="clearHistory" class="icon-btn sm danger" type="button" title="Limpar histórico">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M4 7h16M9.5 7V5.2a1 1 0 0 1 1-1h3a1 1 0 0 1 1 1V7M6.5 7l.9 12.1a1 1 0 0 0 1 .9h7.2a1 1 0 0 0 1-.9L17.5 7"></path>
+              </svg>
+            </button>
+          </div>
+        </div>
+        <div class="history" id="history"></div>
+        <div class="history-foot" id="historyFoot"></div>
+      </section>
+    </div>
+
+    <footer class="foot reveal" style="--delay:.46s">
+      Dados guardados apenas no seu navegador (localStorage) — nada é enviado para servidores.
+    </footer>
+  </main>
+
+  <!-- ================= MODAL TEMPO MANUAL ================= -->
+  <div class="modal" id="manualModal" aria-hidden="true">
+    <div class="modal-backdrop" data-close></div>
+    <div class="modal-panel" role="dialog" aria-modal="true" aria-labelledby="manualTitle">
+      <div class="modal-head">
+        <h3 id="manualTitle">Adicionar tempo manualmente</h3>
+        <button class="icon-btn sm" type="button" data-close aria-label="Fechar">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+            <path d="M6.5 6.5l11 11M17.5 6.5l-11 11"></path>
+          </svg>
+        </button>
+      </div>
+
+      <form id="manualForm">
+        <label class="field">
+          <span>Matéria</span>
+          <select id="mSubject" class="select"></select>
+        </label>
+
+        <div class="field-row">
+          <label class="field">
+            <span>Horas</span>
+            <input id="mHours" type="number" min="0" max="24" step="1" value="0" />
+          </label>
+          <label class="field">
+            <span>Minutos</span>
+            <input id="mMinutes" type="number" min="0" max="59" step="1" value="30" />
+          </label>
+        </div>
+
+        <label class="field">
+          <span>Data</span>
+          <input id="mDate" type="date" />
+        </label>
+
+        <label class="field">
+          <span>Observação <em>(opcional)</em></span>
+          <input id="mNote" type="text" maxlength="60" placeholder="Ex.: lista de exercícios 3" />
+        </label>
+
+        <div class="modal-foot">
+          <button class="btn btn-ghost" type="button" data-close>Cancelar</button>
+          <button class="btn btn-primary" type="submit">
+            <span>Salvar tempo</span>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div class="toasts" id="toasts" aria-live="polite"></div>
+
+  <script src="script.js"></script>
+</body>
+</html>
