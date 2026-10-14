@@ -1,1 +1,1 @@
-[🔗](https://fabriciosantos404.github.io/cronometro-de-estudos/index.html)
+[🔗 Cronômetro de Estudos](https://fabriciosantos404.github.io/cronometro-de-estudos/index.html)
