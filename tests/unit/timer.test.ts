@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { defaultTimer } from '../../src/domain/models';
 import {
+  checkpoint,
   elapsedSec,
   freezeIfRunning,
   pause,
@@ -41,6 +42,21 @@ describe('timer domain', () => {
     const paused = pause(start(defaultTimer(), 1000), 5000);
     const again = pause(paused, 9999);
     expect(again.baseSec).toBe(paused.baseSec);
+  });
+
+  it('checkpoint folds the segment into base but keeps counting', () => {
+    const t = start(defaultTimer(), 1000);
+    const saved = checkpoint(t, 5000); // 4s folded into base
+    expect(saved.running).toBe(true);
+    expect(saved.startedAt).toBe(5000);
+    expect(saved.baseSec).toBe(4);
+    expect(elapsedSec(saved, 5000)).toBe(4); // elapsed never jumps
+    expect(elapsedSec(saved, 6000)).toBe(5); // and keeps counting from there
+  });
+
+  it('checkpoint is a no-op when paused', () => {
+    const paused = pause(start(defaultTimer(), 1000), 5000);
+    expect(checkpoint(paused, 9999)).toEqual(paused);
   });
 
   it('reset clears accumulated time but keeps subject', () => {

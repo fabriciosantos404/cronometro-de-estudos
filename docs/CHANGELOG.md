@@ -3,6 +3,20 @@
 Todas as mudanças notáveis neste projeto seguem [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/).
 Formato de versionamento: [Semantic Versioning](https://semver.org/lang/pt-BR/).
 
+## [2.1.0] — 2026-10-26
+
+### ✨ Adicionado
+- **Relógio no título da aba** — o tempo decorrido aparece ao lado do favicon (`01:23:45 · Focus`), atualizado a cada tick e restaurado ao título base em zero.
+- **Checkpoint de progresso** — nova transição `checkpoint()` no domínio: dobra o segmento corrente em `baseSec` e reinicia `startedAt` sem interromper a contagem; roda ao ocultar a aba e a cada 30 s (heartbeat), limitando perdas em caso de crash.
+
+### 🔄 Alterado
+- **Trocar de aba não pausa mais o cronômetro** — `visibilitychange` → `hidden` apenas persiste o progresso; a pausa automática acontece somente ao **fechar/recarregar** a página (`pagehide`) ou ao recarregar o app.
+
+### 🧪 Testado
+- Testes unitários de `checkpoint` (mantém contagem, é no-op pausado) e teste E2E do título da aba.
+
+---
+
 ## [2.0.0] — 2026-10-26
 
 Reescrita completa do zero por uma equipe de engenharia sênior, transformando o app monolítico (v1) em um sistema modular, testado, documentado e preparado para manutenção.

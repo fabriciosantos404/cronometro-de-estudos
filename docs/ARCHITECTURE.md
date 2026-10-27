@@ -53,7 +53,7 @@ Ver [`DATABASE.md`](DATABASE.md) para o esquema persistido.
 3. Todo cronômetro carrega **pausado** (nunca "resume" sozinho após recarregar).
 4. Sessão só aponta para matéria existente ou `null` ("Geral").
 
-## 3. Cronômetro: pausa automática ao sair
+## 3. Cronômetro: pausa ao fechar, contagem na aba
 
 O tempo decorrido é **derivado de timestamps**, não de contadores incrementais:
 
@@ -62,12 +62,19 @@ elapsed = baseSec + (now - startedAt)/1000   [se running]
 elapsed = baseSec                             [se pausado]
 ```
 
-Gatilhos de pausa (satisfaz "pausa ao sair do site"):
-- `visibilitychange` → `hidden` (trocou de aba/janelou o app)
-- `pagehide` (fechar/recarregar a página)
+Gatilhos de pausa (satisfaz "pausa ao fechar o site"):
+- `pagehide` (fechar/recarregar a página) → `pause()` + persistência
 - carregamento do app (`loadState` força `running=false`)
 
-Isso torna o relógio imune a throttling de timers em segundo plano e consistente após reload.
+**Trocar de aba não pausa**: `visibilitychange` → `hidden` apenas faz um `checkpoint()`
+(acumula o segmento corrente em `baseSec` e reinicia `startedAt`, sem alterar o
+tempo visível) e persiste o estado. Assim, uma aba morta pelo sistema (crash,
+kill do navegador) perde no máximo um checkpoint — um heartbeat no loop de tick
+faz o mesmo a cada 30 s enquanto o cronômetro roda.
+
+Enquanto visível/oculto, o relógio também é espelhado no **título da aba**
+(`HH:MM:SS · Focus`), atualizado junto com o display — imune a throttling de
+timers em segundo plano e consistente após reload.
 
 ## 4. Ciclo de renderização
 

@@ -5,7 +5,8 @@
  *  - Own the single AppState, persist on every mutation (`commit`).
  *  - Structural re-render (`renderAll`) vs. lightweight per-tick update
  *    (`renderLive`) so the clock stays smooth without rebuilding the DOM.
- *  - "Pause on leave": freeze the timer on `visibilitychange`/`pagehide`.
+ *  - "Pause on leave": freeze on `pagehide` (closing the site); switching
+ *    tabs keeps counting, and the clock is mirrored into the tab title.
  *
  * All user strings are written through `textContent` (see dom.ts) — no
  * user data ever reaches `innerHTML`.
@@ -39,6 +40,11 @@ function byId<T extends HTMLElement = HTMLElement>(id: string): T {
   return node as T;
 }
 
+/** Original page title, restored in the tab whenever the clock is at zero. */
+const BASE_TITLE = document.title;
+/** Ticks between progress checkpoints persisted while running (120 × 250 ms = 30 s). */
+const HEARTBEAT_TICKS = 120;
+
 /** Local date "YYYY-MM-DD" for <input type="date">. */
 function toDateInput(d: Date = new Date()): string {
   return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(
@@ -50,6 +56,7 @@ export class App {
   private state: AppState;
   private editingNoteId: string | null = null;
   private editingSubjectId: string | null = null;
+  private lastTitle = ''; // avoids rewriting document.title on every tick
 
   // --- cached DOM ---
   private timerDisplay = byId('timerDisplay');
@@ -180,8 +187,18 @@ export class App {
     this.playLabel.textContent = timer.running ? 'Pausar' : 'Iniciar';
     this.playBtn.dataset.running = String(timer.running);
     this.playBtn.setAttribute('aria-label', timer.running ? 'Pausar cronômetro' : 'Iniciar cronômetro');
+    this.renderTabTitle(elapsed);
     this.renderStats();
     this.renderGoal();
+  }
+
+  /** Mirror the clock into the browser tab title (next to the favicon). */
+  private renderTabTitle(elapsed: number): void {
+    const next =
+      elapsed <= 0 ? BASE_TITLE : `${time.formatClock(elapsed)} · Focus`;
+    if (next === this.lastTitle) return;
+    this.lastTitle = next;
+    document.title = next;
   }
 
   private renderStats(): void {
@@ -622,11 +639,24 @@ export class App {
   /* --------------------------------- wiring -------------------------------- */
 
   private startTicking(): void {
-    const loop = () => this.renderLive();
+    let ticks = 0;
+    const loop = () => {
+      this.renderLive();
+      // Heartbeat: fold progress into the persisted state so an abrupt close
+      // (crash, tab killed by the OS) loses at most one checkpoint interval.
+      if (++ticks >= HEARTBEAT_TICKS) {
+        ticks = 0;
+        if (this.state.timer.running) {
+          this.state.timer = timerDomain.checkpoint(this.state.timer, Date.now());
+          saveState(this.state);
+        }
+      }
+    };
     loop();
     window.setInterval(loop, 250);
   }
 
+  /** Freeze the clock when the site is closed or reloaded (`pagehide`). */
   private pauseOnLeave(): void {
     if (!this.state.timer.running) return;
     const now = Date.now();
@@ -701,11 +731,21 @@ export class App {
       this.toggleTimer();
     });
 
-    // Pause when leaving the site (tab hidden or page unloading).
+    // Tab switches are NOT a pause — the clock keeps counting from timestamps.
+    // When the tab is hidden, checkpoint progress (so a killed tab loses at
+    // most one interval) and refresh the tab title with an accurate value,
+    // even while background timers are throttled.
     document.addEventListener('visibilitychange', () => {
-      if (document.visibilityState === 'hidden') this.pauseOnLeave();
-      else this.renderLive();
+      if (document.visibilityState === 'hidden') {
+        const now = Date.now();
+        this.state.timer = timerDomain.checkpoint(this.state.timer, now);
+        saveState(this.state);
+        this.renderLive();
+      } else {
+        this.renderLive();
+      }
     });
+    // Closing/reloading the site freezes the timer and persists the time.
     window.addEventListener('pagehide', () => this.pauseOnLeave());
 
     // Swatches for the subject color picker.

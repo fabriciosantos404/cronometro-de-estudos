@@ -42,8 +42,26 @@ export function setSubject(timer: TimerState, subjectId: string | null): TimerSt
 }
 
 /**
+ * Fold the running segment into `baseSec` and restart it at `nowMs`,
+ * keeping the timer running. Persists progress without interrupting the
+ * count (used on `visibilitychange` → hidden and by the periodic heartbeat),
+ * so an abrupt close loses at most one checkpoint interval.
+ */
+export function checkpoint(timer: TimerState, nowMs: number): TimerState {
+  if (!timer.running) return timer;
+  const accrued = Math.max(0, Math.floor((nowMs - timer.startedAt) / 1000));
+  return {
+    ...timer,
+    startedAt: nowMs,
+    baseSec: Math.max(0, timer.baseSec + accrued),
+    updatedAt: nowMs,
+  };
+}
+
+/**
  * Return a paused snapshot if currently running. Used on load and on
- * `visibilitychange`/`pagehide` to satisfy "pause when leaving the site".
+ * `pagehide` to satisfy "pause when the site is closed" (tab switches keep
+ * counting).
  */
 export function freezeIfRunning(timer: TimerState, nowMs: number): TimerState {
   return timer.running ? pause(timer, nowMs) : timer;

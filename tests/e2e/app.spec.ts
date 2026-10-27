@@ -69,6 +69,17 @@ test.describe('Cronômetro de Estudos', () => {
     await expect(page.locator('#timerState')).not.toHaveClass(/active/);
   });
 
+  test('mostra o tempo na aba do navegador (ao lado do favicon)', async ({ page }) => {
+    await fresh(page);
+    await expect(page).toHaveTitle('Focus · Cronômetro de Estudos');
+    await page.click('#playBtn');
+    await expect.poll(() => page.title()).toMatch(/^00:00:0[1-9] · Focus$/);
+    await page.click('#playBtn'); // paused keeps showing the frozen time
+    await expect.poll(() => page.title()).toMatch(/^00:00:0[1-9] · Focus$/);
+    await page.click('#resetBtn'); // back to zero restores the base title
+    await expect(page).toHaveTitle('Focus · Cronômetro de Estudos');
+  });
+
   test('salvar e zerar cria registro no histórico', async ({ page }) => {
     await fresh(page);
     await addSubject(page, 'Física');

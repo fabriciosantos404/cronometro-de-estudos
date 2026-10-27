@@ -1,6 +1,6 @@
 # 🔎 Focus · Cronômetro de Estudos
 
-> Ferramenta **local-first** para acompanhar seus estudos: cronômetro com pausa automática ao sair da página, registro manual de tempo, matérias coloridas, comentários sobre cada estudo, histórico, estatísticas, sequência (streak) e meta diária. Tudo salvo **apenas no seu navegador** — sem servidor, sem conta, sem rastreamento.
+> Ferramenta **local-first** para acompanhar seus estudos: cronômetro com pausa automática ao fechar a página e relógio visível no título da aba, registro manual de tempo, matérias coloridas, comentários sobre cada estudo, histórico, estatísticas, sequência (streak) e meta diária. Tudo salvo **apenas no seu navegador** — sem servidor, sem conta, sem rastreamento.
 
 ![Tema escuro](preview-dark.png)
 
@@ -9,17 +9,18 @@
 | # | Recurso | Detalhe |
 |---|---------|---------|
 | 1 | **Cronômetro** | Iniciar / pausar / salvar e zerar. Atalho: **barra de espaço**. |
-| 2 | **Pausa automática ao sair** | Ao trocar de aba ou fechar a página o cronômetro congela e preserva o tempo. |
-| 3 | **Registro manual** | Horas + minutos + data + matéria + observação. |
-| 4 | **Matérias coloridas** | Cadastro com paleta de cores ou cor personalizada. Editável e excluível. |
-| 5 | **Comentários** | Edite um comentário no **último estudo** (destaque) e em qualquer registro do histórico. |
-| 6 | **Histórico** | Lista completa, filtro por matéria, origem (cronômetro/manual) e exclusão individual. |
-| 7 | **Estatísticas** | Total, hoje, semana, nº de sessões e **sequência de dias**. |
-| 8 | **Gráfico por matéria** | Barras por semana ou total, sem bibliotecas externas (SVG nativo). |
-| 9 | **Meta diária** | Barra de progresso com meta ajustável (0,5–24 h). |
-| 10 | **Backup** | Exportar / importar JSON — seus dados nunca ficam presos. |
-| 11 | **Tema claro/escuro** | Persistido entre sessões. |
-| 12 | **PWA offline** | Instalável e funcional offline após a primeira visita. |
+| 2 | **Pausa automática ao fechar** | Ao fechar ou recarregar a página o cronômetro congela e preserva o tempo; trocar de aba **não** pausa. |
+| 3 | **Tempo na aba** | O relógio aparece no título da aba, ao lado do favicon (`01:23:45 · Focus`). |
+| 4 | **Registro manual** | Horas + minutos + data + matéria + observação. |
+| 5 | **Matérias coloridas** | Cadastro com paleta de cores ou cor personalizada. Editável e excluível. |
+| 6 | **Comentários** | Edite um comentário no **último estudo** (destaque) e em qualquer registro do histórico. |
+| 7 | **Histórico** | Lista completa, filtro por matéria, origem (cronômetro/manual) e exclusão individual. |
+| 8 | **Estatísticas** | Total, hoje, semana, nº de sessões e **sequência de dias**. |
+| 9 | **Gráfico por matéria** | Barras por semana ou total, sem bibliotecas externas (SVG nativo). |
+| 10 | **Meta diária** | Barra de progresso com meta ajustável (0,5–24 h). |
+| 11 | **Backup** | Exportar / importar JSON — seus dados nunca ficam presos. |
+| 12 | **Tema claro/escuro** | Persistido entre sessões. |
+| 13 | **PWA offline** | Instalável e funcional offline após a primeira visita. |
 
 ## 🚀 Início rápido
 
