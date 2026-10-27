@@ -15,6 +15,9 @@
 }
 
 [data-theme='dark'] {
+  /* Native controls (select popups, date/time pickers, scrollbars) must
+     follow the app theme, not the OS preference. */
+  color-scheme: dark;
   --bg: #0b0f1a;
   --bg-elev: rgba(255, 255, 255, .04);
   --card: rgba(19, 24, 38, .72);
@@ -32,6 +35,7 @@
 }
 
 [data-theme='light'] {
+  color-scheme: light;
   --bg: #f3f5fb;
   --bg-elev: #ffffff;
   --card: #ffffff;
@@ -324,6 +328,11 @@ body.modal-open { overflow: hidden; }
 .field input, .field select {
   padding: 11px 13px; border-radius: 11px; border: 1px solid var(--border);
   background: var(--bg-elev); color: var(--text); font: inherit; font-size: .9rem;
+}
+/* Dropdown options keep theme colors even where the popup ignores color-scheme
+   (solid background — never the translucent --bg-elev — to avoid alpha glitches). */
+.field select option, .select option {
+  background: var(--card-solid); color: var(--text);
 }
 .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
 .modal-foot { display: flex; gap: 10px; justify-content: flex-end; margin-top: 20px; }

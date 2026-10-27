@@ -12,6 +12,9 @@ Formato de versionamento: [Semantic Versioning](https://semver.org/lang/pt-BR/).
 ### 🔄 Alterado
 - **Trocar de aba não pausa mais o cronômetro** — `visibilitychange` → `hidden` apenas persiste o progresso; a pausa automática acontece somente ao **fechar/recarregar** a página (`pagehide`) ou ao recarregar o app.
 
+### 🐛 Corrigido
+- **Dropdown de matérias ilegível no registro manual** — o popup nativo do `<select>` usava o esquema do SO (fundo claro) enquanto as opções herdavam a cor clara do tema escuro (texto branco sobre branco). Corrigido com `color-scheme` por tema + cores explícitas de `option`.
+
 ### 🧪 Testado
 - Testes unitários de `checkpoint` (mantém contagem, é no-op pausado) e teste E2E do título da aba.
 
